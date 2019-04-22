@@ -17,4 +17,18 @@
       <UniqueIdentifier>{dc6aebe1-bbb7-42d1-9fd6-a06772dc3ac7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="Demo1-MonteCarlo.py">
+      <Filter>Python Scripts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Demo1-MonteCarlo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Demo2-NumericIntegration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
