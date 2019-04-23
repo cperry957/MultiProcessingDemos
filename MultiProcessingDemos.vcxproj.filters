@@ -22,6 +22,9 @@
     <None Include="Demo1-MonteCarlo.py">
       <Filter>Python Scripts</Filter>
     </None>
+    <None Include="Demo2-NumericIntegration.py">
+      <Filter>Python Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo1-MonteCarlo.cpp">

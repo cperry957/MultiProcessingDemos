@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Demo2-NumericIntegration.py" />
     <None Include="README.md" />
     <None Include="Demo1-MonteCarlo.py" />
   </ItemGroup>
