@@ -2,13 +2,15 @@ import os
 import csv
 import pandas as pd
 import matplotlib.pyplot as plt
+from multiprocessing import cpu_count
 
 outputDirectory = os.path.join("Output", "Demo2-NumericIntegration")
 outputFileName = "results.csv"
+
 outputPath = os.path.join(outputDirectory, outputFileName)
 #nodes = [ 50, 100, 128, 150, 200, 256, 300, 400, 512, 750, 1000, 1024 ]
 nodes = [ 128, 256, 512, 1024, 2048, 4096, 8192, 16384 ]
-threads = [ 1, 2, 4, 6, 8, 16, 24, 32, 40, 48, 56, 64, 72 ]
+threads = [1, 2, 4, 6] + list(range(8, cpu_count()+1, 8))
 runs = 1
 
 if(not os.path.exists(outputPath) or input("Would you like to rerun the numeric integration calculations? (Y - Yes)") == "Y"):

@@ -8,7 +8,7 @@
 
 // setting the number of nodes for the calculation:
 #ifndef NUMNODES
-#define NUMNODES	100
+#define NUMNODES	10
 #endif
 
 // how many tries to discover the maximum performance:
