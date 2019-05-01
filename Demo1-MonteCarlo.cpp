@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <omp.h>
-#include <stdlib.h>
 #include <iostream>
 
 // setting the number of threads:

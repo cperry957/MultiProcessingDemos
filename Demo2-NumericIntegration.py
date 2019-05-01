@@ -10,7 +10,8 @@ outputFileName = "results.csv"
 outputPath = os.path.join(outputDirectory, outputFileName)
 #nodes = [ 50, 100, 128, 150, 200, 256, 300, 400, 512, 750, 1000, 1024 ]
 nodes = [ 128, 256, 512, 1024, 2048, 4096, 8192, 16384 ]
-threads = [1, 2, 4, 6] + list(range(8, cpu_count()+1, 8))
+#threads = [1, 2, 4, 6] + list(range(8, cpu_count()+1, 8))
+threads = [1, 2, 4, 6] + list(range(8, 72+1, 8))
 runs = 1
 
 if(not os.path.exists(outputPath) or input("Would you like to rerun the numeric integration calculations? (Y - Yes)") == "Y"):
@@ -36,6 +37,7 @@ print(df_prob.describe())
 
 print("Performance:")
 print(df.groupby(['Threads', 'Nodes'])['Performance'].describe())
+df.groupby(['Threads', 'Nodes'])['Performance'].describe().to_excel(os.path.join(outputDirectory, "RunResultsTable.xlsx"))
 
 report_df = df.loc[df.groupby(['Threads', 'Nodes'])['Performance'].idxmax()]
 single_df = report_df[report_df['Threads'] == report_df['Threads'].min()][['Nodes', 'Performance']]
@@ -44,8 +46,15 @@ single_df.rename(columns={'Performance': 'T1_Performance'}, inplace=True)
 report_df = pd.merge(report_df, single_df, left_on=['Nodes'], right_on=['Nodes'])
 report_df = report_df.assign(Speed_Up = lambda x: x.Performance / x.T1_Performance)
 report_df = report_df.assign(Parallel_Fraction = lambda x: (x.Threads/(x.Threads - 1)*(1-(1/x.Speed_Up))))
+report_df = report_df.assign(Max_SpeedUp = lambda x: (1/(1-x.Parallel_Fraction)))
 #report_df['Parallel_Fraction'] = report_df['Threads'] / (report_df['Threads'] - 1)
+
 print(report_df)
+report_df.to_excel(os.path.join(outputDirectory, "ParallelFractionTable.xlsx"))
+
+print(report_df.groupby(['Threads', 'Nodes'])['Max_SpeedUp'].describe())
+print(report_df.groupby(['Nodes'])['Max_SpeedUp'].describe())
+report_df.groupby(['Nodes'])['Max_SpeedUp'].describe().to_excel(os.path.join(outputDirectory, "MaxSpeedUp.xlsx"))
 
 
 #Create Performance vs. Number of Threads Chart
@@ -55,8 +64,8 @@ ax.set_prop_cycle(color=[cm(1.*i/len(nodes)) for i in range(len(nodes))])
 report_df.set_index('Threads', inplace=True)
 report_df.groupby('Nodes')['Performance'].plot(legend=True, marker=".")
 plt.title("Performance vs. Number of Threads")
-plt.legend(title="Trial Size")
-plt.ylabel("MegaNodes Per Second")
+plt.legend(title="Node Size")
+plt.ylabel("MegaHeights Per Second")
 plt.xlabel("Number of Threads")
 plt.savefig(os.path.join(outputDirectory, 'PerfVsThreads.png'))
 
@@ -69,7 +78,7 @@ report_df.set_index('Nodes', inplace=True)
 report_df.groupby('Threads')['Performance'].plot(legend=True, marker=".")
 plt.title("Performance vs. Number of Nodes")
 plt.legend(title="Threads")
-plt.ylabel("MegaNodes Per Second")
+plt.ylabel("MegaHeights Per Second")
 plt.xlabel("Number of Nodes")
 plt.savefig(os.path.join(outputDirectory, 'PerfVsNodes.png'))
 
@@ -83,6 +92,20 @@ report_df.set_index('Nodes', inplace=True)
 report_df.groupby('Threads')['Performance'].plot(legend=True, marker=".")
 plt.title("Performance vs. Log(Number of Nodes)")
 plt.legend(title="Threads")
-plt.ylabel("MegaNodes Per Second")
+plt.ylabel("MegaHeights Per Second")
 plt.xlabel("Log(Number of Nodes)")
 plt.savefig(os.path.join(outputDirectory, 'PerfVsNodesLog.png'))
+
+#Create Max Speed Up vs. Number of Nodes Chart - Log Scale
+plt.figure()
+fig, ax = plt.subplots()
+ax.set_prop_cycle(color=[cm(1.*i/len(threads)) for i in range(len(threads))])
+ax.set_xscale('log', basex=2)
+report_df.reset_index(inplace=True)
+report_df.set_index('Nodes', inplace=True)
+report_df.groupby('Threads')['Max_SpeedUp'].plot(legend=True, marker=".")
+plt.title("Max Speed Up vs. Log(Number of Nodes)")
+plt.legend(title="Threads")
+plt.ylabel("Speed Up")
+plt.xlabel("Log(Number of Nodes)")
+plt.savefig(os.path.join(outputDirectory, 'MaxSpeedUpVsNodesLog.png'))

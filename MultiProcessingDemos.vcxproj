@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Demo2-NumericIntegration.py" />
+    <None Include="Demo3-FunctionalDecomposition.py" />
     <None Include="README.md" />
     <None Include="Demo1-MonteCarlo.py" />
   </ItemGroup>
@@ -135,9 +136,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Demo2-NumericIntegration.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Demo3-FunctionalDecomposition.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Demo3-FunctionalDecomposition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,6 +25,9 @@
     <None Include="Demo2-NumericIntegration.py">
       <Filter>Python Scripts</Filter>
     </None>
+    <None Include="Demo3-FunctionalDecomposition.py">
+      <Filter>Python Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo1-MonteCarlo.cpp">
@@ -33,5 +36,13 @@
     <ClCompile Include="Demo2-NumericIntegration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Demo3-FunctionalDecomposition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Demo3-FunctionalDecomposition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
