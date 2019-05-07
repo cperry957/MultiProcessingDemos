@@ -7,6 +7,11 @@
 #include <iostream>
 #include "Demo3-FunctionalDecomposition.h"
 
+#ifndef INCLUDE_COYOTES
+#define INCLUDE_COYOTES	1
+#endif // !INCLUDE_COYOTES
+
+
 omp_lock_t	Lock;
 int		NumInThreadTeam;
 int		NumAtBarrier;

@@ -39,9 +39,18 @@
     <ClCompile Include="Demo3-FunctionalDecomposition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="simd.p4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Demo4-SSESIMD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo3-FunctionalDecomposition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simd.p4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
