@@ -127,6 +127,7 @@
   <ItemGroup>
     <None Include="Demo2-NumericIntegration.py" />
     <None Include="Demo3-FunctionalDecomposition.py" />
+    <None Include="Demo4-SSESIMD.py" />
     <None Include="README.md" />
     <None Include="Demo1-MonteCarlo.py" />
   </ItemGroup>
