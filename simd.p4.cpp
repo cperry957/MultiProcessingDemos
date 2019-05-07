@@ -84,10 +84,15 @@ SimdMulSum(float* a, float* b, int len)
 	return sum[0] + sum[1] + sum[2] + sum[3];
 }
 
+void NonSimdMul(float* a, float* b, float* c, int len)
+{
+	for (int i = 0; i < len; i++)
+	{
+		c[i] = a[i] * b[i];
+	}
+}
 
-
-float
-NonSimdMulSum(float* a, float* b, int len)
+float NonSimdMulSum(float* a, float* b, int len)
 {
 	float sum[4] = { 0., 0., 0., 0. };
 	int limit = (len / SSE_WIDTH) * SSE_WIDTH;

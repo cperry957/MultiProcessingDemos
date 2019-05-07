@@ -58,6 +58,23 @@ int main(int argc, char* argv[])
 		printf("%s,%d,%lf,%lf\n", "NonSimdMulSum", ARRAYSIZE, megaCalcsPerSecond, sum);
 	}
 
+	for (int t = 0; t < NUMTRIES; t++)
+	{
+		double time0 = omp_get_wtime();
+		SimdMul(a, b, c, ARRAYSIZE);
+		double time1 = omp_get_wtime();
+		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
+		printf("%s,%d,%lf,%lf\n", "SimdMul", ARRAYSIZE, megaCalcsPerSecond, a[0]);
+	}
+
+	for (int t = 0; t < NUMTRIES; t++)
+	{
+		double time0 = omp_get_wtime();
+		NonSimdMul(a, b, c, ARRAYSIZE);
+		double time1 = omp_get_wtime();
+		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
+		printf("%s,%d,%lf,%lf\n", "NonSimdMul", ARRAYSIZE, megaCalcsPerSecond, a[0]);
+	}
 	return 0;
 }
 
