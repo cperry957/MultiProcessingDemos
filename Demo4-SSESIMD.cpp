@@ -6,7 +6,7 @@
 
 // setting the number of nodes for the calculation:
 #ifndef ARRAYSIZE
-#define ARRAYSIZE	128
+#define ARRAYSIZE	1048576
 #endif
 
 // how many tries to discover the maximum performance:
@@ -43,11 +43,19 @@ int main(int argc, char* argv[])
 	for (int t = 0; t < NUMTRIES; t++)
 	{
 		double time0 = omp_get_wtime();
-
 		float sum = SimdMulSum(a, b, ARRAYSIZE);
 		double time1 = omp_get_wtime();
-		//double megaHeightsPerSecond = (double)(NUMNODES * NUMNODES) / (time1 - time0) / 1000000.;
-		printf("%d,%lf\n", ARRAYSIZE, sum);
+		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
+		printf("%s,%d,%lf,%lf\n", "SimdMulSum", ARRAYSIZE, megaCalcsPerSecond, sum);
+	}
+
+	for (int t = 0; t < NUMTRIES; t++)
+	{
+		double time0 = omp_get_wtime();
+		float sum = NonSimdMulSum(a, b, ARRAYSIZE);
+		double time1 = omp_get_wtime();
+		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
+		printf("%s,%d,%lf,%lf\n", "NonSimdMulSum", ARRAYSIZE, megaCalcsPerSecond, sum);
 	}
 
 	return 0;
