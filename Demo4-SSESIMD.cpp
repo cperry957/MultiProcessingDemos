@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 		float sum = SimdMulSum(a, b, ARRAYSIZE);
 		double time1 = omp_get_wtime();
 		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
-		printf("%s,%d,%lf,%lf\n", "SimdMulSum", ARRAYSIZE, megaCalcsPerSecond, sum);
+		printf("%s,%d,%lf,%lf\n", "SimdMulSum", ARRAYSIZE, megaCalcsPerSecond);
 	}
 
 	for (int t = 0; t < NUMTRIES; t++)
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 		float sum = NonSimdMulSum(a, b, ARRAYSIZE);
 		double time1 = omp_get_wtime();
 		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
-		printf("%s,%d,%lf,%lf\n", "NonSimdMulSum", ARRAYSIZE, megaCalcsPerSecond, sum);
+		printf("%s,%d,%lf,%lf\n", "NonSimdMulSum", ARRAYSIZE, megaCalcsPerSecond);
 	}
 
 	for (int t = 0; t < NUMTRIES; t++)
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 		SimdMul(a, b, c, ARRAYSIZE);
 		double time1 = omp_get_wtime();
 		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
-		printf("%s,%d,%lf,%lf\n", "SimdMul", ARRAYSIZE, megaCalcsPerSecond, a[0]);
+		printf("%s,%d,%lf,%lf\n", "SimdMul", ARRAYSIZE, megaCalcsPerSecond);
 	}
 
 	for (int t = 0; t < NUMTRIES; t++)
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 		NonSimdMul(a, b, c, ARRAYSIZE);
 		double time1 = omp_get_wtime();
 		double megaCalcsPerSecond = (double)(ARRAYSIZE) / (time1 - time0) / 1000000.;
-		printf("%s,%d,%lf,%lf\n", "NonSimdMul", ARRAYSIZE, megaCalcsPerSecond, a[0]);
+		printf("%s,%d,%lf,%lf\n", "NonSimdMul", ARRAYSIZE, megaCalcsPerSecond);
 	}
 	return 0;
 }
