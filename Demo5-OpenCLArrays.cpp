@@ -255,7 +255,7 @@ void ArrayMulti()
 		}
 	}
 
-	fprintf(stderr, "ArrayMulti,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
+	printf("ArrayMulti,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
 
 #ifdef WIN32
 	Sleep(2000);
@@ -467,7 +467,7 @@ void ArrayMultiAdd()
 		}
 	}
 
-	fprintf(stderr, "ArrayMultiAdd,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
+	printf("ArrayMultiAdd,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
 
 #ifdef WIN32
 	Sleep(2000);
@@ -677,7 +677,7 @@ void ArrayMultiReduce()
 		//	sum, expected, fabs(sum - expected));
 	}
 
-	fprintf(stderr, "ArrayMultiReduce,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
+	printf("ArrayMultiReduce,%d,%d,%d,%lf\n", NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS / (time1 - time0) / 1000000000.);
 
 
 #ifdef WIN32
