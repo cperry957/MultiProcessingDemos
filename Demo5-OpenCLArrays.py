@@ -18,7 +18,7 @@ else:
 
 for size in sizes:
     for local_size in local_sizes:
-        cmd = "g++ -DNUM_ELEMENTS=%d -DNUM_ELEMENTS=%d -o Demo5-OpenCLArrays Demo5-OpenCLArrays.cpp /usr/lib/x86_64-linux-gnu/libOpenCL.so -lm -fopenmp" % ( size, local_size )
+        cmd = "g++ -DNUM_ELEMENTS=%d -DLOCAL_SIZE=%d -o Debug/Demo5-OpenCLArrays Demo5-OpenCLArrays.cpp /usr/lib/x86_64-linux-gnu/libOpenCL.so -lm -fopenmp" % ( size, local_size )
         os.system(cmd)
         cmd = "./Debug/Demo5-OpenCLArrays >> " + outputPath
         os.system(cmd)
