@@ -31,8 +31,11 @@
     <None Include="Demo4-SSESIMD.py">
       <Filter>Python Scripts</Filter>
     </None>
-    <None Include="first.cl">
+    <None Include="Demo5-OpenCLArrays.cl">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="Demo5-OpenCLArrays.py">
+      <Filter>Python Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -48,10 +51,10 @@
     <ClCompile Include="Demo4-SSESIMD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="first.cpp">
+    <ClCompile Include="simd.p4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="simd.p4.cpp">
+    <ClCompile Include="Demo5-OpenCLArrays.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,6 +77,9 @@
       <Filter>Resource Files</Filter>
     </Library>
     <Library Include="OpenCL64.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
+    <Library Include="OpenCL32.lib">
       <Filter>Resource Files</Filter>
     </Library>
   </ItemGroup>
