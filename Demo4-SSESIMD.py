@@ -1,7 +1,7 @@
 import os
 import csv
-#import pandas as pd
-#import matplotlib.pyplot as plt
+import pandas as pd
+import matplotlib.pyplot as plt
 from multiprocessing import cpu_count
 
 outputDirectory = os.path.join("Output", "Demo4-SSESIMD")
@@ -23,39 +23,45 @@ for size in sizes:
     cmd = "./Debug/prog >> " + outputPath
     os.system(cmd)
 
-#df = pd.DataFrame(pd.read_csv(outputPath, names=['Type', 'ArraySize', 'MegaCalcsPerSecond', 'Sum'], header=None))
+df = pd.DataFrame(pd.read_csv(outputPath, names=['Type', 'ArraySize', 'MegaCalcsPerSecond', 'Sum'], header=None))
 
-#print("Performance:")
-#grouped_df = df.groupby(['ArraySize', 'Type'])['MegaCalcsPerSecond'].max()
-#report_df = pd.DataFrame(grouped_df.to_frame().unstack().MegaCalcsPerSecond)
+print("Performance:")
+grouped_df = df.groupby(['ArraySize', 'Type'])['MegaCalcsPerSecond'].max()
+report_df = pd.DataFrame(grouped_df.to_frame().unstack().MegaCalcsPerSecond)
 
-#report_df = report_df.assign(Speed_Up_Mul = lambda x: x.SimdMul / x.NonSimdMul)
-#report_df = report_df.assign(Speed_Up_MulSum = lambda x: x.SimdMulSum / x.NonSimdMulSum)
-#print(report_df)
+report_df = report_df.assign(Speed_Up_Mul = lambda x: x.SimdMul / x.NonSimdMul)
+report_df = report_df.assign(Speed_Up_MulSum = lambda x: x.SimdMulSum / x.NonSimdMulSum)
+print(report_df)
 
-##Create Speed Up Chart
-#cm = plt.get_cmap('gist_earth')
-#fig, ax = plt.subplots()
-#report_df.plot(kind='line',y='Speed_Up_Mul',ax=ax, label='Speed Up - Mul')
-#report_df.plot(kind='line',y='Speed_Up_MulSum',ax=ax, label='Speed Up - MulSum')
-#ax.set_xscale('log', basex=2)
-#plt.title("Speed Ups")
-#plt.xlabel("Log_2(Array Size)")
-#plt.ylabel("Speed Up")
-#plt.legend(loc='upper left')
-#plt.savefig(os.path.join(outputDirectory, 'SpeedUp.png'))
+df.groupby(['ArraySize', 'Type'])['MegaCalcsPerSecond'].describe().to_excel(os.path.join(outputDirectory, "ResultsSummarized.xlsx"))
 
-##Create Performance Chart
-#cm = plt.get_cmap('gist_earth')
-#fig, ax = plt.subplots()
-#report_df.plot(kind='line',y='SimdMulSum',ax=ax, label='Simd - Mul Sum')
-#report_df.plot(kind='line',y='SimdMul',ax=ax, label='Simd - Mul')
-#report_df.plot(kind='line',y='NonSimdMulSum',ax=ax, label='Non-Simd - Mul Sum')
-#report_df.plot(kind='line',y='NonSimdMul',ax=ax, label='Non-Simd - Mul')
+#Save Chart
+report_df.to_excel(os.path.join(outputDirectory, "SpeedUp.xlsx"))
 
-#ax.set_xscale('log', basex=2)
-#plt.title("Performance")
-#plt.xlabel("Log_2(Array Size)")
-#plt.ylabel("MegaCalcs/Second")
-#plt.legend(loc='upper left')
-#plt.savefig(os.path.join(outputDirectory, 'Performance.png'))
+#Create Speed Up Chart
+cm = plt.get_cmap('gist_earth')
+fig, ax = plt.subplots()
+report_df.plot(kind='line',y='Speed_Up_MulSum',ax=ax, label='Speed Up - MulSum')
+report_df.plot(kind='line',y='Speed_Up_Mul',ax=ax, label='Speed Up - Mul')
+ax.set_xscale('log', basex=2)
+plt.title("Speed Up Vs. Array Size")
+plt.xlabel("Log_2(Array Size)")
+plt.ylabel("Speed Up")
+ax.set_ylim(bottom=0)
+plt.legend(loc='upper left')
+plt.savefig(os.path.join(outputDirectory, 'SpeedUp.png'))
+
+#Create Performance Chart
+cm = plt.get_cmap('gist_earth')
+fig, ax = plt.subplots()
+report_df.plot(kind='line',y='SimdMulSum',ax=ax, label='Simd - Mul Sum')
+report_df.plot(kind='line',y='SimdMul',ax=ax, label='Simd - Mul')
+report_df.plot(kind='line',y='NonSimdMulSum',ax=ax, label='Non-Simd - Mul Sum')
+report_df.plot(kind='line',y='NonSimdMul',ax=ax, label='Non-Simd - Mul')
+
+ax.set_xscale('log', basex=2)
+plt.title("Performance Vs. Array Size")
+plt.xlabel("Log_2(Array Size)")
+plt.ylabel("MegaCalcs/Second")
+plt.legend(loc='upper left')
+plt.savefig(os.path.join(outputDirectory, 'Performance.png'))

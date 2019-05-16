@@ -31,6 +31,9 @@
     <None Include="Demo4-SSESIMD.py">
       <Filter>Python Scripts</Filter>
     </None>
+    <None Include="first.cl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo1-MonteCarlo.cpp">
@@ -42,10 +45,13 @@
     <ClCompile Include="Demo3-FunctionalDecomposition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="simd.p4.cpp">
+    <ClCompile Include="Demo4-SSESIMD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Demo4-SSESIMD.cpp">
+    <ClCompile Include="first.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simd.p4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,8 +59,22 @@
     <ClInclude Include="Demo3-FunctionalDecomposition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cl_platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="simd.p4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libOpenCL.so">
+      <Filter>Resource Files</Filter>
+    </Library>
+    <Library Include="OpenCL64.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
