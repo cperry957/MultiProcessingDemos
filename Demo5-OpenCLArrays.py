@@ -2,6 +2,7 @@
 import csv
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from multiprocessing import cpu_count
 
 outputDirectory = os.path.join("Output", "Demo5-OpenCLArrays")
@@ -10,20 +11,44 @@ outputPath = os.path.join(outputDirectory, outputFileName)
 sizes = [ 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608 ]
 local_sizes = [ 8, 16, 32, 64, 128, 256, 512, 1024 ]
 
-if(os.path.exists(outputPath)):
-    os.remove(outputPath)
-else:
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
+#if(os.path.exists(outputPath)):
+#    os.remove(outputPath)
+#else:
+#    if not os.path.exists(outputDirectory):
+#        os.makedirs(outputDirectory)
 
-for size in sizes:
-    for local_size in local_sizes:
-        cmd = "g++ -DNUM_ELEMENTS=%d -DLOCAL_SIZE=%d -o Debug/Demo5-OpenCLArrays Demo5-OpenCLArrays.cpp /usr/lib/x86_64-linux-gnu/libOpenCL.so -lm -fopenmp" % ( size, local_size )
-        os.system(cmd)
-        cmd = "./Debug/Demo5-OpenCLArrays >> " + outputPath
-        os.system(cmd)
+#for size in sizes:
+#    for local_size in local_sizes:
+#        cmd = "g++ -DNUM_ELEMENTS=%d -DLOCAL_SIZE=%d -o Debug/Demo5-OpenCLArrays Demo5-OpenCLArrays.cpp /usr/lib/x86_64-linux-gnu/libOpenCL.so -lm -fopenmp" % ( size, local_size )
+#        os.system(cmd)
+#        cmd = "./Debug/Demo5-OpenCLArrays >> " + outputPath
+#        os.system(cmd)
 
-df = pd.DataFrame(pd.read_csv(outputPath, names=['Function', 'Size', 'Local_Size', 'Number_Work_Groups', 'MegaCalcsPerSecond'], header=None))
-
+df = pd.DataFrame(pd.read_csv(outputPath, names=['Function', 'Size', 'Local_Size', 'Number_Work_Groups', 'GigaCalcsPerSecond'], header=None))
+df = df[df.Size <= 8388608]
 print("Performance:")
 print(df)
+
+report_df = pd.DataFrame(df[['Function', 'Size', 'Local_Size', 'GigaCalcsPerSecond']]).pivot_table(index='Size', columns=['Function','Local_Size'], values='GigaCalcsPerSecond')
+print(report_df)
+
+#Create Multi Chart
+cm = plt.get_cmap('gist_earth')
+fig, ax = plt.subplots()
+newLabels = list(["ArrayMulti - " + str(x) for x in np.array(report_df.ArrayMulti.axes[1].tolist())]) + list(["ArrayMultiAdd - " + str(x) for x in np.array(report_df.ArrayMultiAdd.axes[1].tolist())])
+ax.set_prop_cycle(color=[cm(1.*i/len(newLabels)) for i in range(len(newLabels))])
+
+#Array Mult & Sum
+report_df.ArrayMulti.plot(kind='line', ax=ax)
+report_df.ArrayMultiAdd.plot(kind='line', ax=ax)
+
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles, newLabels, prop={'size': 8})
+
+#report_df.plot(kind='line',y='ArrayMultiAdd',ax=ax)
+ax.set_xscale('log', basex=2)
+plt.title("Giga Operations/Second Vs. Global Work Size")
+plt.xlabel("Log_2(Global Work Sizes)")
+plt.ylabel("Giga Operations/Second")
+ax.set_ylim(bottom=0)
+plt.savefig(os.path.join(outputDirectory, 'ArrayMultiComp.png'))
