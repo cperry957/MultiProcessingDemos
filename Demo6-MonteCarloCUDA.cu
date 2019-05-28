@@ -31,21 +31,32 @@
 #endif
 
 // ranges for the random numbers:
-const float XCMIN = -1.0;
-const float XCMAX = 1.0;
-const float YCMIN = 0.0;
-const float YCMAX = 2.0;
-const float RMIN = 0.5;
-const float RMAX = 2.0;
+#ifndef XCMIN
+#define XCMIN -1.0
+#endif
+#ifndef XCMAX
+#define XCMAX 1.0
+#endif
+#ifndef YCMIN
+#define YCMIN 0.0
+#endif
+#ifndef YCMAX
+#define YCMAX 2.0
+#endif
+#ifndef RMIN
+#define RMIN 0.5
+#endif
+#ifndef RMAX
+#define RMAX 2.0
+#endif
 
 // function prototypes:
 float		Ranf(float, float);
-int		Ranf(int, int);
 void		TimeOfDaySeed();
 
 // Monte Carlo (CUDA Kernel) on the device:
 
-__global__  void MonteCarlo(float* A, float* B, float* C, float* D)
+__global__  void MonteCarlo(float* xcs, float* ycs, float* rs, float* results)
 {
 	__shared__ float prods[BLOCKSIZE];
 
@@ -54,8 +65,64 @@ __global__  void MonteCarlo(float* A, float* B, float* C, float* D)
 	unsigned int wgNum = blockIdx.x;
 	unsigned int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-	//prods[tnum] = A[gid] * B[gid];
-	prods[tnum] = 1.;
+	float xc = xcs[gid];
+	float yc = ycs[gid];
+	float  r = rs[gid];
+
+	// solve for the intersection using the quadratic formula:
+	float a = 2.;
+	float b = -2. * (xc + yc);
+	float c = xc * xc + yc * yc - r * r;
+	float d = b * b - 4. * a * c;
+	prods[tnum] = 0.;
+
+	//If d is less than 0., then the circle was completely missed. (Case A).
+	if (d >= 0.)
+	{
+		// hits the circle:
+		// get the first intersection:
+		d = sqrt(d);
+		float t1 = (-b + d) / (2. * a);	// time to intersect the circle
+		float t2 = (-b - d) / (2. * a);	// time to intersect the circle
+		float tmin = t1 < t2 ? t1 : t2;		// only care about the first intersection
+
+		//If tmin is less than 0., then the circle completely engulfs the laser pointer. (Case B).
+		if (tmin >= 0.)
+		{
+			// where does it intersect the circle?
+			float xcir = tmin;
+			float ycir = tmin;
+
+			// get the unitized normal vector at the point of intersection:
+			float nx = xcir - xc;
+			float ny = ycir - yc;
+			float nsqrt = sqrt(nx * nx + ny * ny);
+			nx /= nsqrt;	// unit vector
+			ny /= nsqrt;	// unit vector
+
+			// get the unitized incoming vector:
+			float inx = xcir - 0.;
+			float iny = ycir - 0.;
+			float in = sqrt(inx * inx + iny * iny);
+			inx /= in;	// unit vector
+			iny /= in;	// unit vector
+
+			// get the outgoing (bounced) vector:
+			float dot = inx * nx + iny * ny;
+			//float outx = inx - 2. * nx * dot;	// angle of reflection = angle of incidence`
+			float outy = iny - 2. * ny * dot;	// angle of reflection = angle of incidence`
+
+			// find out if it hits the infinite plate:
+			float t = (0. - ycir) / outy;
+
+			//If t is less than 0., then the reflected beam went up instead of down.  Continue on to the next trial in the for - loop.
+			if (t >= 0.)
+			{
+				//Otherwise, this beam hit the infinite plate. (Case D) Add to the number of hits.
+				prods[tnum] = 1.;
+			}
+		}
+	}
 
 	for (int offset = 1; offset < numItems; offset *= 2)
 	{
@@ -69,7 +136,7 @@ __global__  void MonteCarlo(float* A, float* B, float* C, float* D)
 
 	__syncthreads();
 	if (tnum == 0)
-		D[wgNum] = prods[0];
+		results[wgNum] = prods[0];
 }
 
 // main program:
@@ -78,14 +145,13 @@ int main(int argc, char* argv[])
 {
 	int dev = findCudaDevice(argc, (const char**)argv);
 	TimeOfDaySeed();		// seed the random number generator
+	fprintf(stderr, "XCMIN = %lf, XCMAX = %lf - YCMIN = %lf, YCMAX = %lf - RMIN = %lf, RMAX = %lf\n", XCMIN, XCMAX, YCMIN, YCMAX, RMIN, RMAX);
 
 	// allocate host memory:
 
 	float* xcs = new float[SIZE];
 	float* ycs = new float[SIZE];
 	float* rs = new float[SIZE];
-
-	float* hits = new float[SIZE / BLOCKSIZE];
 
 	// fill the random-value arrays:
 	for (int i = 0; i < SIZE; i++)
@@ -95,40 +161,41 @@ int main(int argc, char* argv[])
 		rs[i] = Ranf(RMIN, RMAX);
 	}
 
-	// get ready to record the maximum performance and the probability:
-	float maxPerformance = 0.;      // must be declared outside the NUMTRIES loop
-	float currentProb;              // must be declared outside the NUMTRIES loop
+	float* hits = new float[SIZE / BLOCKSIZE];
+
+	// Initialize hits to 0:
+	for (int i = 0; i < (SIZE / BLOCKSIZE); i++)
+	{
+		hits[i] = 0;
+	}
 
 	// allocate device memory:
 
-	float* dA, * dB, * dC, * dD;
+	float* dX, * dY, * dR, * dResults;
 
-	dim3 dimsA(SIZE, 1, 1);
-	dim3 dimsB(SIZE, 1, 1);
-	dim3 dimsC(SIZE, 1, 1);
-	dim3 dimsD(SIZE / BLOCKSIZE, 1, 1);
-
-	//__shared__ float prods[SIZE/BLOCKSIZE];
-
+	dim3 dimsX(SIZE, 1, 1);
+	dim3 dimsY(SIZE, 1, 1);
+	dim3 dimsR(SIZE, 1, 1);
+	dim3 dimsResults(SIZE / BLOCKSIZE, 1, 1);
 
 	cudaError_t status;
-	status = cudaMalloc(reinterpret_cast<void**>(&dA), SIZE * sizeof(float));
+	status = cudaMalloc(reinterpret_cast<void**>(&dX), SIZE * sizeof(float));
 	checkCudaErrors(status);
-	status = cudaMalloc(reinterpret_cast<void**>(&dB), SIZE * sizeof(float));
+	status = cudaMalloc(reinterpret_cast<void**>(&dY), SIZE * sizeof(float));
 	checkCudaErrors(status);
-	status = cudaMalloc(reinterpret_cast<void**>(&dC), SIZE * sizeof(float));
+	status = cudaMalloc(reinterpret_cast<void**>(&dR), SIZE * sizeof(float));
 	checkCudaErrors(status);
-	status = cudaMalloc(reinterpret_cast<void**>(&dD), (SIZE / BLOCKSIZE) * sizeof(float));
+	status = cudaMalloc(reinterpret_cast<void**>(&dResults), (SIZE / BLOCKSIZE) * sizeof(float));
 	checkCudaErrors(status);
 
 
 	// copy host memory to the device:
 
-	status = cudaMemcpy(dA, xcs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
+	status = cudaMemcpy(dX, xcs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
 	checkCudaErrors(status);
-	status = cudaMemcpy(dB, ycs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
+	status = cudaMemcpy(dY, ycs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
 	checkCudaErrors(status);
-	status = cudaMemcpy(dC, rs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
+	status = cudaMemcpy(dR, rs, SIZE * sizeof(float), cudaMemcpyHostToDevice);
 	checkCudaErrors(status);
 
 	// setup the execution parameters:
@@ -157,7 +224,7 @@ int main(int argc, char* argv[])
 
 	for (int t = 0; t < NUMTRIALS; t++)
 	{
-		MonteCarlo << < grid, threads >> > (dA, dB, dC, dD);
+		MonteCarlo << < grid, threads >> > (dX, dY, dR, dResults);
 	}
 
 	// record the stop event:
@@ -175,7 +242,6 @@ int main(int argc, char* argv[])
 	checkCudaErrors(status);
 
 	// compute and print the performance
-
 	double secondsTotal = 0.001 * (double)msecTotal;
 	double multsPerSecond = (float)SIZE * (float)NUMTRIALS / secondsTotal;
 	double megaMultsPerSecond = multsPerSecond / 1000000.;
@@ -183,18 +249,20 @@ int main(int argc, char* argv[])
 
 	// copy result from the device to the host:
 
-	status = cudaMemcpy(hits, dD, (SIZE / BLOCKSIZE) * sizeof(float), cudaMemcpyDeviceToHost);
+	status = cudaMemcpy(hits, dResults, (SIZE / BLOCKSIZE) * sizeof(float), cudaMemcpyDeviceToHost);
 	checkCudaErrors(status);
 
 	// check the sum :
-
 	double sum = 0.;
 	for (int i = 0; i < SIZE / BLOCKSIZE; i++)
 	{
 		//fprintf(stderr, "hC[%6d] = %10.2f\n", i, hC[i]);
 		sum += (double)hits[i];
 	}
-	fprintf(stderr, "\nsum = %10.2lf\n", sum);
+
+	double currentProb = sum / (float)(SIZE);
+	fprintf(stderr, "\nsum = %lf\n", currentProb);
+	printf("%d,%d,%lf,%lf\n", BLOCKSIZE, SIZE, currentProb, megaMultsPerSecond);
 
 	// clean up memory:
 	delete[] xcs;
@@ -202,13 +270,13 @@ int main(int argc, char* argv[])
 	delete[] rs;
 	delete[] hits;
 
-	status = cudaFree(dA);
+	status = cudaFree(dX);
 	checkCudaErrors(status);
-	status = cudaFree(dB);
+	status = cudaFree(dY);
 	checkCudaErrors(status);
-	status = cudaFree(dC);
+	status = cudaFree(dR);
 	checkCudaErrors(status);
-	status = cudaFree(dD);
+	status = cudaFree(dResults);
 	checkCudaErrors(status);
 
 
@@ -218,18 +286,9 @@ int main(int argc, char* argv[])
 float Ranf(float low, float high)
 {
 	float r = (float)rand();               // 0 - RAND_MAX
-	float t = r / (float)RAND_MAX;       // 0. - 1.
+	float t = r / (float)(RAND_MAX);       // 0. - 1.
 
 	return   low + t * (high - low);
-}
-
-int
-Ranf(int ilow, int ihigh)
-{
-	float low = (float)ilow;
-	float high = ceil((float)ihigh);
-
-	return (int)Ranf(low, high);
 }
 
 void TimeOfDaySeed()
