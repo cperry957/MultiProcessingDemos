@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 {
 	int dev = findCudaDevice(argc, (const char**)argv);
 	TimeOfDaySeed();		// seed the random number generator
-	fprintf(stderr, "XCMIN = %lf, XCMAX = %lf - YCMIN = %lf, YCMAX = %lf - RMIN = %lf, RMAX = %lf\n", XCMIN, XCMAX, YCMIN, YCMAX, RMIN, RMAX);
+	fprintf(stdout, "XCMIN = %lf, XCMAX = %lf - YCMIN = %lf, YCMAX = %lf - RMIN = %lf, RMAX = %lf\n", XCMIN, XCMAX, YCMIN, YCMAX, RMIN, RMAX);
 
 	// allocate host memory:
 
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 	double secondsTotal = 0.001 * (double)msecTotal;
 	double multsPerSecond = (float)SIZE * (float)NUMTRIALS / secondsTotal;
 	double megaMultsPerSecond = multsPerSecond / 1000000.;
-	fprintf(stderr, "Array Size = %10d, MegaMultReductions/Second = %10.2lf\n", SIZE, megaMultsPerSecond);
+	fprintf(stdout, "Array Size = %10d, MegaMultReductions/Second = %10.2lf\n", SIZE, megaMultsPerSecond);
 
 	// copy result from the device to the host:
 
@@ -261,8 +261,8 @@ int main(int argc, char* argv[])
 	}
 
 	double currentProb = sum / (float)(SIZE);
-	fprintf(stderr, "\nsum = %lf\n", currentProb);
-	printf("%d,%d,%lf,%lf\n", BLOCKSIZE, SIZE, currentProb, megaMultsPerSecond);
+	fprintf(stdout, "Probability = %lf\n\n", currentProb);
+	fprintf(stderr, "%d,%d,%lf,%lf\n", BLOCKSIZE, SIZE, currentProb, megaMultsPerSecond);
 
 	// clean up memory:
 	delete[] xcs;

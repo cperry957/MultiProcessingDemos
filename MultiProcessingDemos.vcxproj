@@ -135,6 +135,7 @@
     <None Include="Demo5-OpenCLArrays.cl" />
     <None Include="Demo5-OpenCLArrays.py" />
     <None Include="Demo6-MonteCarloCUDA.cu" />
+    <None Include="Demo6-MonteCarloCUDA.py" />
     <None Include="README.md" />
     <None Include="Demo1-MonteCarlo.py" />
   </ItemGroup>
