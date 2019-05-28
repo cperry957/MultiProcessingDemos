@@ -37,6 +37,9 @@
     <None Include="Demo5-OpenCLArrays.py">
       <Filter>Python Scripts</Filter>
     </None>
+    <None Include="Demo6-MonteCarloCUDA.cu">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo1-MonteCarlo.cpp">

@@ -57,10 +57,6 @@ main(int argc, char* argv[])
 		rs[n] = Ranf(RMIN, RMAX);
 	}
 
-	// get ready to record the maximum performance and the probability:
-	float maxPerformance = 0.;      // must be declared outside the NUMTRIES loop
-	float currentProb;              // must be declared outside the NUMTRIES loop
-
 	// looking for the maximum performance:
 	for (int t = 0; t < NUMTRIES; t++)
 	{
