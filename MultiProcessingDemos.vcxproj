@@ -175,6 +175,12 @@
     <ClInclude Include="cl.h" />
     <ClInclude Include="cl_platform.h" />
     <ClInclude Include="Demo3-FunctionalDecomposition.h" />
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="helper_cuda.h" />
+    <ClInclude Include="helper_functions.h" />
+    <ClInclude Include="helper_image.h" />
+    <ClInclude Include="helper_string.h" />
+    <ClInclude Include="helper_timer.h" />
     <ClInclude Include="simd.p4.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

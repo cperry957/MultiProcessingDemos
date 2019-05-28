@@ -74,6 +74,24 @@
     <ClInclude Include="simd.p4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_cuda.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="libOpenCL.so">
