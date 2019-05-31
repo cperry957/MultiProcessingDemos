@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 {
 	int dev = findCudaDevice(argc, (const char**)argv);
 	TimeOfDaySeed();		// seed the random number generator
-	fprintf(stdout, "XCMIN = %lf, XCMAX = %lf - YCMIN = %lf, YCMAX = %lf - RMIN = %lf, RMAX = %lf\n", XCMIN, XCMAX, YCMIN, YCMAX, RMIN, RMAX);
+	fprintf(stdout, "XCMIN = %lf, XCMAX = %lf - YCMIN = %lf, YCMAX = %lf - RMIN = %lf, RMAX = %lf\n", (float)(XCMIN), (float)(XCMAX), (float)(YCMIN), (float)(YCMAX), (float)(RMIN), (float)(RMAX));
 
 	// allocate host memory:
 
@@ -156,9 +156,9 @@ int main(int argc, char* argv[])
 	// fill the random-value arrays:
 	for (int i = 0; i < SIZE; i++)
 	{
-		xcs[i] = Ranf(XCMIN, XCMAX);
-		ycs[i] = Ranf(YCMIN, YCMAX);
-		rs[i] = Ranf(RMIN, RMAX);
+		xcs[i] = Ranf((float)(XCMIN), (float)(XCMAX));
+		ycs[i] = Ranf((float)(YCMIN), (float)(YCMAX));
+		rs[i] = Ranf((float)(RMIN), (float)(RMAX));
 	}
 
 	float* hits = new float[SIZE / BLOCKSIZE];

@@ -28,7 +28,7 @@ if(not os.path.exists(outputPath) or input("Would you like to rerun the Monte Ca
     for trial in trials:
         for thread in threads:
             print("Trials = %d Threads = %d" % (trial, thread))
-            cmd = "nvcc -DXCMIN=%d -DXCMAX=%d -DYCMIN=%d -DYCMAX=%d -DRMIN=%d -DRMAX=%d -DBLOCKSIZE=%d -DSIZE=%d -o Debug/Demo6-MonteCarloCUDA Demo6-MonteCarloCUDA.cu" % (xcmin, xcmax, ycmin, ycmax, rmin, rmax, thread, trial)
+            cmd = "/usr/local/cuda-10.0/bin/nvcc -DXCMIN=%f -DXCMAX=%f -DYCMIN=%f -DYCMAX=%f -DRMIN=%f -DRMAX=%f -DBLOCKSIZE=%d -DSIZE=%d -o Debug/Demo6-MonteCarloCUDA Demo6-MonteCarloCUDA.cu" % (xcmin, xcmax, ycmin, ycmax, rmin, rmax, thread, trial)
             os.system( cmd )
             for run in range(runs):
                 cmd = "./Debug/Demo6-MonteCarloCUDA 2>> " + outputPath
